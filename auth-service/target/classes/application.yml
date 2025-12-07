@@ -1,0 +1,51 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        enabled: false  # 如果 Nacos 未启动，设置为 false 禁用服务注册
+        fail-fast: false  # 注册失败时不中断启动
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ddd_auth?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1024bibi.com
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+  # Redis 配置（SSO 需要 Redis 存储 Token，如果 Redis 未启动，设置为 false）
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.example.auth.infrastructure.po
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  # JWT密钥（HS512算法需要至少64字节，这里使用更长的密钥确保安全）
+  secret: springcloud-alibaba-ddd-secret-key-for-jwt-token-generation-this-is-a-very-long-secret-key-to-ensure-security
+  expiration: 86400
+
+# 禁用数据库健康检查（如果数据库暂时无法连接）
+management:
+  health:
+    db:
+      enabled: false
+

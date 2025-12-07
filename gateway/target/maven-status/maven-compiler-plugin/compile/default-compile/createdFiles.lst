@@ -1,0 +1,5 @@
+com\example\gateway\config\GatewayConfig.class
+com\example\gateway\GatewayApplication.class
+com\example\gateway\filter\AuthFilter.class
+com\example\gateway\filter\ErrorFilter.class
+com\example\gateway\filter\LoggingFilter.class

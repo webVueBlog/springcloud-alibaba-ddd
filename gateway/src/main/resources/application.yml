@@ -1,0 +1,89 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+  main:
+    web-application-type: reactive  # 强制使用响应式 Web 应用类型，避免与 Spring MVC 冲突
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        enabled: false  # 如果 Nacos 未启动，设置为 false 禁用服务注册
+        fail-fast: false  # 注册失败时不中断启动
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        enabled: false  # 如果 Nacos Config 未启动，设置为 false
+    gateway:
+      discovery:
+        locator:
+          enabled: false  # 禁用服务发现路由，使用直接HTTP地址
+          lower-case-service-id: true  # 服务名转小写
+      routes:
+        - id: auth-service
+        # uri: lb://auth-service
+          uri: http://localhost:8081  # 直接使用HTTP地址，不依赖服务发现
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+        - id: user-service
+        # uri: lb://user-service
+          uri: http://localhost:8082  # 直接使用HTTP地址，不依赖服务发现
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=0
+        - id: role-service
+          uri: http://localhost:8082  # 角色管理接口，路由到 user-service
+          predicates:
+            - Path=/api/role/**
+          filters:
+            - StripPrefix=0
+        - id: menu-service
+          uri: http://localhost:8082  # 菜单管理接口，路由到 user-service
+          predicates:
+            - Path=/api/menu/**
+          filters:
+            - StripPrefix=0
+        - id: order-service
+          uri: http://localhost:8083  # 直接使用HTTP地址，不依赖服务发现
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=0
+        - id: seckill-service
+          uri: http://localhost:8084  # 直接使用HTTP地址，不依赖服务发现
+          predicates:
+            - Path=/api/seckill/**
+          filters:
+            - StripPrefix=0
+        - id: content-service
+          uri: http://localhost:8087  # Content Service 端口
+          predicates:
+            - Path=/api/content/**
+          filters:
+            - StripPrefix=0
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"  # 使用 allowedOriginPatterns 代替 allowedOrigins，支持通配符且允许 credentials
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+  # Redis 配置（SSO 需要 Redis 存储 Token，如果 Redis 未启动，设置为 false）
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+
+# JWT 配置（用于 SSO）
+# 注意：JWT secret 必须与 auth-service 保持一致，否则 Token 验证会失败
+jwt:
+  secret: springcloud-alibaba-ddd-secret-key-for-jwt-token-generation-this-is-a-very-long-secret-key-to-ensure-security
+  expiration: 86400  # 24小时（秒）
+

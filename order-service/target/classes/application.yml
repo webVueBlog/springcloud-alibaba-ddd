@@ -1,0 +1,78 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: order-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        enabled: false  # 如果 Nacos 未启动，设置为 false 禁用服务注册
+        fail-fast: false  # 注册失败时不中断启动
+  # 如果不需要 RocketMQ，取消下面的注释以禁用自动配置（消除启动警告）
+  # autoconfigure:
+  #   exclude:
+  #     - org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ddd_auth?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1024bibi.com
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+# MyBatis Plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: assign_id
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 禁用数据库健康检查（如果数据库暂时无法连接）
+management:
+  health:
+    db:
+      enabled: false
+
+seata:
+  enabled: false  # 如果 Seata Server 未启动或数据库无法连接，设置为 false
+  application-id: order-service
+  tx-service-group: my_test_tx_group
+  config:
+    type: nacos
+    nacos:
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+      namespace: ""
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+      namespace: ""
+
+# RocketMQ 配置
+# 选项1：如果 RocketMQ 已启动，取消下面的注释并配置正确的地址
+# rocketmq:
+#   name-server: localhost:9876  # RocketMQ NameServer 地址
+#   producer:
+#     group: order-producer-group
+#     send-message-timeout: 3000
+#     retry-times-when-send-failed: 2
+
+# 注意：
+# - 即使不配置 RocketMQ，应用也能正常启动（代码中已使用 @Autowired(required = false)）
+# - 只是消息发送和消费功能会被禁用
+# - 如果看到 RocketMQ 相关警告，可以选择禁用自动配置（选项2）
+

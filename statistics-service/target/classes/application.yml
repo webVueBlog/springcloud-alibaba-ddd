@@ -1,0 +1,58 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: statistics-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        enabled: false
+        fail-fast: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ddd_auth?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1024bibi.com
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+    # Redisson Spring Boot Starter 配置
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://127.0.0.1:6379"
+          database: 0
+          connectionPoolSize: 64
+          connectionMinimumIdleSize: 10
+          connectTimeout: 3000
+          timeout: 3000
+          retryAttempts: 3
+          retryInterval: 1500
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_id
+
+# 管理端点配置
+management:
+  health:
+    db:
+      enabled: false  # 暂时禁用数据库健康检查，避免数据库不存在时启动失败
+

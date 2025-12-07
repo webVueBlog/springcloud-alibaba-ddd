@@ -1,0 +1,4 @@
+com\example\message\impl\RocketMQMessageConsumer.class
+com\example\message\impl\RocketMQMessageProducer.class
+com\example\message\MessageConsumer.class
+com\example\message\MessageProducer.class

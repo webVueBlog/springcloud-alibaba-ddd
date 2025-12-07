@@ -1,0 +1,273 @@
+// 水墨画风格样式
+@use 'sass:color';
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap');
+
+// 水墨画效果变量
+$ink-black: #1a1a1a;
+$ink-gray: #4a4a4a;
+$ink-light-gray: #8a8a8a;
+$paper-white: #faf8f3;
+$paper-cream: #f5f1e8;
+$ink-red: #c73e1d;
+
+// 文本水墨画效果
+@mixin ink-text-effect {
+  color: $ink-black;
+  font-family: 'ZCOOL QingKe HuangYou', 'Ma Shan Zheng', 'Microsoft YaHei', sans-serif;
+  text-shadow: 
+    0 1px 0 rgba(0, 0, 0, 0.1),
+    0 2px 2px rgba(0, 0, 0, 0.05),
+    0 0 20px rgba(0, 0, 0, 0.03);
+  letter-spacing: 0.5px;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, 
+      transparent 0%, 
+      rgba(0, 0, 0, 0.1) 20%, 
+      rgba(0, 0, 0, 0.1) 80%, 
+      transparent 100%);
+    opacity: 0.6;
+  }
+}
+
+// 水墨画背景
+@mixin ink-background {
+  background: $paper-white;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $paper-cream 0%, $paper-white 100%);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='ink-pattern' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='50' cy='50' r='0.5' fill='%23000000' opacity='0.02'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23ink-pattern)'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    pointer-events: none;
+  }
+}
+
+// 水墨画输入框
+@mixin ink-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  padding: 12px 0;
+  font-family: 'ZCOOL QingKe HuangYou', 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+  color: $ink-black;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-bottom-color: $ink-black;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  &::placeholder {
+    color: $ink-light-gray;
+    opacity: 0.6;
+  }
+}
+
+// 水墨画按钮
+@mixin ink-button {
+  background: $ink-black;
+  color: $paper-white;
+  border: none;
+  border-radius: 0;
+  padding: 14px 32px;
+  font-family: 'ZCOOL QingKe HuangYou', 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:hover {
+    background: color.scale($ink-black, $lightness: 5%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 水墨画卡片
+@mixin ink-card {
+  background: $paper-white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.02) inset;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, 
+      transparent 0%, 
+      rgba(0, 0, 0, 0.1) 50%, 
+      transparent 100%);
+  }
+}
+
+// 水墨画标题
+.ink-title {
+  @include ink-text-effect;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.ink-subtitle {
+  @include ink-text-effect;
+  font-size: 16px;
+  color: $ink-gray;
+  text-align: center;
+  margin-bottom: 32px;
+  opacity: 0.8;
+}
+
+// 水墨画容器
+.ink-container {
+  @include ink-background;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 水墨画表单卡片
+.ink-form-card {
+  @include ink-card;
+  width: 100%;
+  max-width: 420px;
+  padding: 48px 40px;
+  position: relative;
+  
+  .ink-form-title {
+    @include ink-text-effect;
+    font-size: 28px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+}
+
+// 水墨画输入框样式
+.ink-input {
+  @include ink-input;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+// 水墨画按钮样式
+.ink-button {
+  @include ink-button;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.ink-button-secondary {
+  @include ink-button;
+  background: transparent;
+  color: $ink-black;
+  border: 2px solid $ink-black;
+  
+  &:hover {
+    background: $ink-black;
+    color: $paper-white;
+  }
+}
+
+// 水墨画链接
+.ink-link {
+  color: $ink-black;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+  font-family: 'ZCOOL QingKe HuangYou', 'Microsoft YaHei', sans-serif;
+  
+  &:hover {
+    border-bottom-color: $ink-black;
+    opacity: 0.8;
+  }
+}
+
+// 水墨画分隔线
+.ink-divider {
+  height: 1px;
+  background: linear-gradient(to right, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.1) 20%, 
+    rgba(0, 0, 0, 0.1) 80%, 
+    transparent 100%);
+  margin: 24px 0;
+}
+
+// 水墨画装饰元素
+.ink-decoration {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  opacity: 0.03;
+  pointer-events: none;
+  
+  &-1 {
+    top: -50px;
+    left: -50px;
+    background: radial-gradient(circle, $ink-black 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  
+  &-2 {
+    bottom: -50px;
+    right: -50px;
+    background: radial-gradient(circle, $ink-black 0%, transparent 70%);
+    border-radius: 50%;
+  }
+}
+

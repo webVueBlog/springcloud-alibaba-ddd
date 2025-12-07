@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:5.7
+    container_name: ddd-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ddd_auth
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ddd-network
+
+  # Redis
+  redis:
+    image: redis:5.0
+    container_name: ddd-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ddd-network
+
+  # Nacos
+  nacos:
+    image: nacos/nacos-server:v2.2.0
+    container_name: ddd-nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+    depends_on:
+      - mysql
+    networks:
+      - ddd-network
+
+networks:
+  ddd-network:
+    driver: bridge
+

@@ -1,0 +1,22 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: seckill-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        enabled: false  # 如果 Nacos 未启动，设置为 false 禁用服务注册
+        fail-fast: false  # 注册失败时不中断启动
+  # Redis 配置
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+
+redisson:
+  address: redis://127.0.0.1:6379
+

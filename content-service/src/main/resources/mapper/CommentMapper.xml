@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.content.infrastructure.mapper.CommentMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="CommentResultMap" type="com.example.content.infrastructure.po.CommentPO">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="target_type" property="targetType" />
+        <result column="target_id" property="targetId" />
+        <result column="parent_id" property="parentId" />
+        <result column="content" property="content" />
+        <result column="like_count" property="likeCount" />
+        <result column="reply_count" property="replyCount" />
+        <result column="audit_status" property="auditStatus" />
+        <result column="audit_user_id" property="auditUserId" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_reason" property="auditReason" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+    
+    <!-- 查询顶级评论 -->
+    <select id="findTopLevelComments" resultMap="CommentResultMap">
+        SELECT * FROM content_comment
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND parent_id IS NULL
+          AND deleted = 0
+          AND status = 1
+          AND audit_status = 'APPROVED'
+        ORDER BY create_time DESC
+    </select>
+    
+    <!-- 查询回复列表 -->
+    <select id="findRepliesByParentId" resultMap="CommentResultMap">
+        SELECT * FROM content_comment
+        WHERE parent_id = #{parentId}
+          AND deleted = 0
+          AND status = 1
+          AND audit_status = 'APPROVED'
+        ORDER BY create_time ASC
+    </select>
+    
+    <!-- 增加点赞数 -->
+    <update id="incrementLikeCount">
+        UPDATE content_comment
+        SET like_count = IFNULL(like_count, 0) + 1
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 减少点赞数 -->
+    <update id="decrementLikeCount">
+        UPDATE content_comment
+        SET like_count = GREATEST(IFNULL(like_count, 0) - 1, 0)
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 增加回复数 -->
+    <update id="incrementReplyCount">
+        UPDATE content_comment
+        SET reply_count = IFNULL(reply_count, 0) + 1
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 减少回复数 -->
+    <update id="decrementReplyCount">
+        UPDATE content_comment
+        SET reply_count = GREATEST(IFNULL(reply_count, 0) - 1, 0)
+        WHERE id = #{id}
+    </update>
+    
+</mapper>
+
